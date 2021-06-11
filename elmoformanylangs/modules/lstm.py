@@ -7,6 +7,7 @@ from torch.autograd import Variable
 import copy
 
 
+# \ref page 4, layers=2, forward + backward, concat[forward_projection, backward_projection]
 class LstmbiLm(nn.Module):
   def __init__(self, config, use_cuda=False):
     super(LstmbiLm, self).__init__()
@@ -22,5 +23,5 @@ class LstmbiLm(nn.Module):
     self.projection = nn.Linear(self.config['encoder']['dim'], self.config['encoder']['projection_dim'], bias=True)
 
   def forward(self, inputs):
-    forward, backward = self.encoder(inputs)[0].split(self.config['encoder']['dim'], 2)
+    forward, backward = self.encoder(inputs)[0].split(self.config['encoder']['dim'], 2) # split dim=2 in stride config['encoder']['dim'], here half
     return torch.cat([self.projection(forward), self.projection(backward)], dim=2)
